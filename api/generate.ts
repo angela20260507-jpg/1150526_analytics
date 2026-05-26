@@ -19,6 +19,12 @@ const SYSTEM_INSTRUCTIONS = `
 `;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  console.log("=== Debug Env ===");
+  console.log("CWD:", process.cwd());
+  console.log("GEMINI_API_KEY exists:", !!process.env.GEMINI_API_KEY);
+  console.log("NVIDIA_API_KEY exists:", !!process.env.NVIDIA_API_KEY);
+  console.log("=================");
+
   // Allow only POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ success: false, error: 'Method Not Allowed' });
