@@ -5,18 +5,27 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 dotenv.config();
 
-const SYSTEM_INSTRUCTIONS = `
-你是一位專業的會議記錄助理。請根據使用者提供的會議逐字稿，整理出結構化的會議紀錄。
+function getSystemInstructions(translateLang: string, provider: string): string {
+  let translationSection = "";
+  if (translateLang && translateLang !== "不翻譯") {
+    translationSection = `5. **${translateLang}翻譯版**：將上述 1~4 點的內容完整翻譯成專業的${translateLang}。\n`;
+  }
+
+  let extraHint = "";
+  if (provider === "nvidia") {
+    extraHint = "\n【重要警告】你必須使用『繁體中文』來撰寫第 1 至第 4 點，只有第 5 點（翻譯版）才使用指定的翻譯語言。絕對不能整個回覆都使用英文！";
+  }
+
+  return `你是一位專業的會議記錄助理。請根據使用者提供的會議逐字稿，整理出結構化的會議紀錄。
 請務必遵守以下輸出格式要求：
 
 1. **會議主題與時間**：擷取會議的主題與時間。
 2. **與會者**：列出參與會議的人員。
 3. **會議重點總結**：用 3 到 5 個重點總結會議內容。
 4. **Action Items (待辦事項)**：明確列出接下來的待辦事項與負責人。
-5. **英文翻譯版**：將上述 1~4 點的內容完整翻譯成專業的英文。
-
-請以 Markdown 格式輸出，所有繁體中文部分必須使用**繁體中文**回覆，不要包含任何額外的問候語或結語。
-`;
+${translationSection}
+請以 Markdown 格式輸出，所有繁體中文部分必須使用**繁體中文**回覆，不要包含任何額外的問候語或結語。${extraHint}`;
+}
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   console.log("=== Debug Env ===");
@@ -66,7 +75,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         body: JSON.stringify({
           model: "nvidia/nemotron-mini-4b-instruct",
           messages: [
-            { role: "system", content: SYSTEM_INSTRUCTIONS },
+            { role: "system", content: getSystemInstructions(translateLang, provider) },
             { role: "user", content: userPrompt }
           ],
           temperature: 0.25
@@ -103,7 +112,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         model: "gemini-3.5-flash",
         contents: userPrompt,
         config: {
-          systemInstruction: SYSTEM_INSTRUCTIONS,
+          systemInstruction: getSystemInstructions(translateLang, provider),
           temperature: 0.25,
         }
       });
