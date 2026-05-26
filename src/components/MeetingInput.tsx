@@ -28,6 +28,7 @@ export default function MeetingInput({ onSubmit, isLoading }: MeetingInputProps)
   const [summaryTone, setSummaryTone] = useState("detailed");
   const [customInstructions, setCustomInstructions] = useState("");
   const [showHelp, setShowHelp] = useState(false);
+  const [provider, setProvider] = useState("gemini");
 
   // 一鍵載入範例
   const handleLoadPreset = (presetIndex: number) => {
@@ -37,6 +38,7 @@ export default function MeetingInput({ onSubmit, isLoading }: MeetingInputProps)
       setTranslateLang(p.translateLang);
       setSummaryTone(p.summaryTone);
       setCustomInstructions(p.customInstructions);
+      setProvider("gemini");
     }
   };
 
@@ -52,7 +54,8 @@ export default function MeetingInput({ onSubmit, isLoading }: MeetingInputProps)
       transcript,
       translateLang,
       summaryTone,
-      customInstructions
+      customInstructions,
+      provider
     });
   };
 
@@ -157,6 +160,23 @@ export default function MeetingInput({ onSubmit, isLoading }: MeetingInputProps)
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+            {/* AI 服務提供商 */}
+            <div className="flex flex-col gap-1.5 md:col-span-2">
+              <label htmlFor="provider-select" className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-blue-500 animate-pulse" />
+                <span>AI 服務提供商</span>
+              </label>
+              <select
+                id="provider-select"
+                className="bg-white border border-slate-200 rounded-lg p-3 text-sm text-slate-805 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all cursor-pointer shadow-xs font-bold"
+                value={provider}
+                onChange={(e) => setProvider(e.target.value)}
+              >
+                <option value="gemini">Google Gemini (gemini-3.5-flash)</option>
+                <option value="nvidia">NVIDIA (nvidia/nemotron-mini-4b-instruct)</option>
+              </select>
+            </div>
+
             {/* 總結風格 */}
             <div className="flex flex-col gap-1.5">
               <label htmlFor="summary-tone-select" className="text-xs font-bold text-slate-600">

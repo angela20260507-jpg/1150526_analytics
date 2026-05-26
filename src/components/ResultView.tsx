@@ -16,6 +16,7 @@ interface ResultViewProps {
   isLoading: boolean;
   onRegenerate?: () => void;
   langRequest?: string;
+  provider?: string;
 }
 
 const LOADING_STEPS = [
@@ -28,7 +29,7 @@ const LOADING_STEPS = [
   "正在將核心提鍊與代辦事項轉換翻譯為目標語系..."
 ];
 
-export default function ResultView({ summary, isLoading, onRegenerate, langRequest }: ResultViewProps) {
+export default function ResultView({ summary, isLoading, onRegenerate, langRequest, provider }: ResultViewProps) {
   const [copied, setCopied] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
 
@@ -235,7 +236,7 @@ export default function ResultView({ summary, isLoading, onRegenerate, langReque
 
           {/* 底部小提示 */}
           <div className="bg-slate-50 px-6 py-4 border-t border-slate-200 text-[10px] text-slate-400 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-            <span>使用 Google Gemini 專業摘要核心，生成格式支援標誌性的美化 Markdown 幾何列表。</span>
+            <span>使用 {provider === "nvidia" ? "NVIDIA" : "Google Gemini"} 專業摘要核心，生成格式支援標誌性的美化 Markdown 幾何列表。</span>
             <span>本次翻譯成果語系設定: <strong className="text-blue-600 font-bold">{langRequest || "不翻譯"}</strong></span>
           </div>
         </div>

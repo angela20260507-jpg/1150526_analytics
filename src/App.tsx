@@ -10,14 +10,16 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeLang, setActiveLang] = useState("");
+  const [activeProvider, setActiveProvider] = useState("gemini");
 
   const handleGenerateSummary = async (formData: GenerateSummaryRequest) => {
     setIsLoading(true);
     setError(null);
     setActiveLang(formData.translateLang);
+    setActiveProvider(formData.provider);
 
     try {
-      const response = await fetch("/api/generate-summary", {
+      const response = await fetch("/api/generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,8 +65,8 @@ export default function App() {
               <p className="text-xs text-rose-700 mt-1 leading-relaxed">{error}</p>
               <div className="mt-3 text-xs bg-white border border-rose-100 rounded p-2.5 text-slate-550/90 leading-relaxed">
                 <span className="font-bold block text-slate-800 mb-1">🔍 優先自我檢測方案：</span>
-                1. 請檢查您的 Google Gemini API Key 是否正確設定（在 **Settings &gt; Secrets** 面板中）。<br />
-                2. 確認您的 API Key 已設置，而後點擊生成大按鈕即可。
+                1. 請檢查您的 API Key (GEMINI_API_KEY 或 NVIDIA_API_KEY) 是否已在環境變數或本地 .env.local 檔案中正確設定。<br />
+                2. 確認您的 API Key 已設置，而後重新點擊生成按鈕。
               </div>
             </div>
           </div>
@@ -83,6 +85,7 @@ export default function App() {
               summary={summary} 
               isLoading={isLoading} 
               langRequest={activeLang}
+              provider={activeProvider}
             />
           </div>
         </div>
@@ -96,7 +99,7 @@ export default function App() {
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
             <span>系統狀態：正常 (Port 3000)</span>
           </span>
-          <span>模型: Gemini 3.5 Flash</span>
+          <span>模型: {activeProvider === "nvidia" ? "nvidia/nemotron-mini-4b-instruct" : "gemini-3.5-flash"}</span>
           <span>版本: v2.5.0</span>
         </div>
       </footer>

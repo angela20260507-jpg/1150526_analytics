@@ -3,6 +3,7 @@ export interface GenerateSummaryRequest {
   translateLang: string;
   summaryTone: string;
   customInstructions: string;
+  provider: string;
 }
 
 export interface GenerateSummaryResponse {
